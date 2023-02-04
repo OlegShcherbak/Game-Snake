@@ -3,28 +3,28 @@
 #include <ctime>
 #include <conio.h>
 using namespace std;
-bool GameOver;
-const int height = 20, width = 40;// Size of field
-int x, y, fruit_x, fruit_y;//coordination of snake and fruit
+bool gameOver;
+const int HEIGHT = 20, WIDTH = 40;// Size of field
+int x, y, fruitX, fruitY;//coordination of snake and fruit
 int tailX[50], tailY[50];// Array with snake body coordinates
 int nTail; // For number of elements in the tail of the snake
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-void SetColor(int text, int bg);
+void setColor(int text, int bg);
 void hidecursor();
 void draw();
 void logic();
 int main() {
 	hidecursor();
-    GameOver = false;
-    x = width / 2 ;   // setting the snake at the center of the field
-    y = height / 2;
-    while(!GameOver){
+    gameOver = false;
+    x = WIDTH / 2 ;   // setting the snake at the center of the field
+    y = HEIGHT / 2;
+    while(!gameOver){
         draw();
         logic();
     }
     system("pause"); 
 }
-void SetColor(int text, int bg){
+void setColor(int text, int bg){
     SetConsoleTextAttribute(console, (WORD)((bg << 4) | text));
 }
 void hidecursor(){ 				//setting the size and visibility of the cursor
@@ -39,26 +39,26 @@ coord.X = 0;
 coord.Y = 0; 
 SetConsoleCursorPosition(console, coord); 
 // drawing top line of field
-    for (int i = 0; i < width+1; i++){ 
-    	SetColor(6, 0);
+    for (int i = 0; i < WIDTH+1; i++){ 
+    	setColor(6, 0);
         cout << ".";
     }
     cout << endl;
 // drawing Side lines of field
-    for (int i = 0; i < height-1; i++){
-        for (int j = 0; j < width; j++){
-            if (j == 0 || j == width - 1){
-        	SetColor(6, 0);
+    for (int i = 0; i < HEIGHT-1; i++){
+        for (int j = 0; j < WIDTH; j++){
+            if (j == 0 || j == WIDTH - 1){
+        	setColor(6, 0);
             cout << ".";
         }
 // Drawing the head of snake
         if (i == y && j == x){
-        	SetColor(9, 0);
+        	setColor(9, 0);
             cout << char(1);
         }
 // Drawing the fruit
-        else if (i == fruit_y && j == fruit_x){
-        	SetColor(2, 0);
+        else if (i == fruitY && j == fruitX){
+        	setColor(2, 0);
             cout << char(254);
         }
 // Checking if the snake eat the fruit, if it's true drawing a new element of the snake
@@ -67,7 +67,7 @@ SetConsoleCursorPosition(console, coord);
         	for(int k = 0; k < nTail; k++){
         		if ( tailX[k] == j && tailY[k] == i){
         			print = true;
-        			SetColor(6, 0);
+        			setColor(6, 0);
         			cout<< char(3);
 				}	
 			}
@@ -77,41 +77,41 @@ SetConsoleCursorPosition(console, coord);
     }
     cout << endl;
     }
-// drawing botom line of field
-    for (int i = 0; i < width+1; i++){ 
-    	SetColor(6, 0);
+// Drawing botom line of field
+    for (int i = 0; i < WIDTH+1; i++){ 
+    	setColor(6, 0);
         cout << ".";
     }
     cout << endl;
-    SetColor(2, 0);
+    setColor(2, 0);
     cout<< "Score:" << nTail << endl;
 }
-void logic() {					/*reads the selected direction, moves the elements of the snake one by one in the specified direction, 
+void logic() {					/*Reads the selected direction, moves the elements of the snake one by one in the specified direction, 
 								checks whether the snake hit the wall or itself, increases the points and generates a new fruit;*/
-//overwrite the coordinates of each element of the snake in the previous position when moving
+//Overwrite the coordinates of each element of the snake in the previous position when moving
 	int prevX= tailX[0];
 	int prevY= tailY[0];
-	int prev2X, prev2Y;
+	int tempX, tempY;
 	tailX[0] = x;
 	tailY[0] = y;
 	for(int i=1; i<nTail; i++){
-		prev2X = tailX[i];
-		prev2Y = tailY[i];
+		tempX = tailX[i];
+		tempY = tailY[i];
 		tailX[i] = prevX;
 		tailY[i] = prevY;
-		prevX = prev2X;
-		prevY = prev2Y;
+		prevX = tempX;
+		prevY = tempY;
 	}
 	int code;
-	int temp_code;// key what was hit first.
+	int tempCode;// key what was hit first.
 	Sleep(100);   // speed of snake
-        if(_kbhit()){
-        temp_code = _getch();
-        if(temp_code=='w'|| temp_code=='s'|| temp_code=='a'|| temp_code=='d')
-            code=temp_code;
+        if(kbhit()){
+        tempCode = getch();
+        if(tempCode=='w'|| tempCode=='s'|| tempCode=='a'|| tempCode=='d')
+            code=tempCode;
        }
      	if(_kbhit()){
-            code = _getch();
+            code = getch();
         }
     else{
             cout << ' ' ;
@@ -125,22 +125,22 @@ void logic() {					/*reads the selected direction, moves the elements of the sna
 				x++;
         }	
 //Checking if you hit a bord so its Game Over
-     if( x > width-2 || x < 0 || y > height-1 || y < 0){
-	 GameOver=true;
-	 SetColor(4, 0);
+     if( x > WIDTH-2 || x < 0 || y > HEIGHT-1 || y < 0){
+	 gameOver=true;
+	 setColor(4, 0);
 	 cout<<"Game Over"<<endl;	 
 	 }	
 //Checking if you hit the tail so its Game Over 		
     for(int i=0; i < nTail; i++){ 
     	if(tailX[i]== x && tailY[i] == y){
-    		GameOver = true;
+    		gameOver = true;
     		cout<<"Game Over"<<endl;
 		}
 	} 
 // Eating the fruit and adding the score and random fruit on field
-    if (x == fruit_x && y == fruit_y){
-    	fruit_x = rand() % (width-2);  
-    	fruit_y = rand() % (height-2);
+    if (x == fruitX && y == fruitY){
+    	fruitX = rand() % (WIDTH-2);  
+    	fruitY = rand() % (HEIGHT-2);
     	nTail++;
 	}
 	
